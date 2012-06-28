@@ -1,13 +1,14 @@
 {
   "interval": "30",
+  "id": "bsb",
   "carbon": {
-    "server": "localhost",
+    "host": "localhost",
     "port": "2003"
   },
-  "urls": [
-    "http://www.theverge.com",
-    "http://www.sbnation.com",
-    "http://syllabus.voxmedia.com",
-    "http://coredump.io"
-  ]
+  "urls": {
+    "theverge":     "http://www.theverge.com",
+    "sbnation":     "http://www.sbnation.com",
+    "syllabus_cms": "http://syllabus.voxmedia.com",
+    "coredumpio":   "http://coredump.io"
+  }
 }

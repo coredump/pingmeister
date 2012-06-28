@@ -1,4 +1,5 @@
 Fs           = require('fs')
+Net          = require('net')
 Phantom      = require('phantom')
 EventEmitter = require('events').EventEmitter
 
@@ -7,20 +8,39 @@ class Pingmeister extends EventEmitter
   constructor: (@config) ->
 
   run: () ->
-      console.log "Create worker"
-      for url in @config.urls
-        do (url) ->
-          Phantom.create (worker) ->
-            do (url) ->
-              worker.createPage (page) ->
-                console.log "Starting a new test for url #{url}"
-                start = Date.now()
-                page.open url, (status) ->
-                  if status != 'success'
-                    console.log  "FAILED: #{url}"
-                  else
-                    taken = Date.now() - start
-                    console.log "SUCCESS: #{url} in #{taken}"
-                  worker.exit()
+    console.log "Create worker"
+    for tag, url of @config.urls
+      do (tag) =>
+        Phantom.create (worker) =>
+          do (tag) =>
+            worker.createPage (page) =>
+              console.log "Starting a new test for url #{url}"
+              start = Date.now()
+              page.open @config.urls[tag], (status) =>
+                if status != 'success'
+                  console.log  "FAILED: #{url}"
+                else
+                  now         = Date.now()
+                  taken       = now - start
+                  metric_line = "Pingmeister.load_time.#{@config.id}.#{tag} #{taken} #{now/1000}"
+                  console.log "SUCCESS: #{url} in #{taken}"
+                  @send metric_line
+                worker.exit()
+
+  send: (line) ->
+    conn = Net.connect @config.carbon.port, @config.carbon.host
+    conn.addListener 'error', (error) =>
+      console.log "Connection error: #{error}"
+    conn.on 'connect', () =>
+      try
+        console.log "Sending metrics"
+        conn.write "#{line}\n"
+      catch error
+        console.log "Failed to send data: #{error}"
+        throw new Error "Failed to send data: #{error}"
+      finally
+        console.log "Disconnected"
+        conn.end()
+
 
 module.exports = Pingmeister
