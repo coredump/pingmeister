@@ -1,0 +1,13 @@
+{
+  "interval": "30",
+  "carbon": {
+    "server": "localhost",
+    "port": "2003"
+  },
+  "urls": [
+    "http://www.theverge.com",
+    "http://www.sbnation.com",
+    "http://syllabus.voxmedia.com",
+    "http://coredump.io"
+  ]
+}

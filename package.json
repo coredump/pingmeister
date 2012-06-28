@@ -1,0 +1,9 @@
+{
+    "name": "pingmeister"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {
+      "phantom": "0.3.x",
+      "coffee-script": "1.2.x"
+  }
+}
