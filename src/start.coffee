@@ -9,22 +9,23 @@ class Pingmeister extends EventEmitter
 
   run: () ->
     console.log "Create worker"
-    Phantom.create (worker) =>
-      for tag, url of @config.urls
-        do (tag) =>
-          worker.createPage (page) =>
-            console.log "Starting a new test for url #{@config.urls[tag]}"
-            start = Date.now()
-            page.open @config.urls[tag], (status) =>
-              if status != 'success'
-                console.log  "FAILED: #{url}"
-              else
-                now         = Date.now()
-                taken       = now - start
-                metric_line = "Pingmeister.load_time.#{@config.id}.#{tag} #{taken} #{now/1000}"
-                console.log "SUCCESS: #{@config.urls[tag]} in #{taken}"
-                @send metric_line
-              worker.exit()
+    for tag, url of @config.urls
+      do (tag) =>
+        Phantom.create (worker) =>
+          do (tag) =>
+            worker.createPage (page) =>
+              console.log "Starting a new test for url #{@config.urls[tag]}"
+              start = Date.now()
+              page.open @config.urls[tag], (status) =>
+                if status != 'success'
+                  console.log  "FAILED: #{url}"
+                else
+                  now         = Date.now()
+                  taken       = now - start
+                  metric_line = "Pingmeister.load_time.#{@config.id}.#{tag} #{taken} #{now/1000}"
+                  console.log "SUCCESS: #{@config.urls[tag]} in #{taken}"
+                  @send metric_line
+                worker.exit()
 
   send: (line) ->
     conn = Net.connect @config.carbon.port, @config.carbon.host
