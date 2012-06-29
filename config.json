@@ -1,14 +1,11 @@
 {
-  "interval": "30",
+  "interval": "60",
   "id": "bsb",
   "carbon": {
     "host": "localhost",
     "port": "2003"
   },
   "urls": {
-    "theverge":     "http://www.theverge.com",
-    "sbnation":     "http://www.sbnation.com",
-    "syllabus_cms": "http://syllabus.voxmedia.com",
-    "coredumpio":   "http://coredump.io"
+    "google":     "http://www.google.com",
   }
 }

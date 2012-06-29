@@ -14,7 +14,7 @@ class Pingmeister extends EventEmitter
         Phantom.create (worker) =>
           do (tag) =>
             worker.createPage (page) =>
-              console.log "Starting a new test for url #{url}"
+              console.log "Starting a new test for url #{@config.urls[tag]}"
               start = Date.now()
               page.open @config.urls[tag], (status) =>
                 if status != 'success'
@@ -23,7 +23,7 @@ class Pingmeister extends EventEmitter
                   now         = Date.now()
                   taken       = now - start
                   metric_line = "Pingmeister.load_time.#{@config.id}.#{tag} #{taken} #{now/1000}"
-                  console.log "SUCCESS: #{url} in #{taken}"
+                  console.log "SUCCESS: #{@config.urls[tag]} in #{taken}"
                   @send metric_line
                 worker.exit()
 
@@ -39,7 +39,6 @@ class Pingmeister extends EventEmitter
         console.log "Failed to send data: #{error}"
         throw new Error "Failed to send data: #{error}"
       finally
-        console.log "Disconnected"
         conn.end()
 
 
